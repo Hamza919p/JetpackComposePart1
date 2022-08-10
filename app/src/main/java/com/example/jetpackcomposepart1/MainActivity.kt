@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -67,84 +68,32 @@ fun CustomScaffold() {
             )
         }
     ) {
-        initializeRecyclerView(users = dummyData())
+        StateManagementFun()
     }
 }
 
+/**
+ * STATE- MANAGEMENT
+ * */
+
 @Composable
-fun loginScreen() {
-    val userName = remember {
+fun StateManagementFun() {
+    val message = rememberSaveable {       //rememberSaveAble means value will not destroy on rotation
         mutableStateOf("")
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp)
-    ) {
-        Text(
-            text = "Welcome To Login Screen",
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = userName.value,
-            onValueChange = {
-                userName.value = it
-            },
-            label = { Text(text = "User Name") },
-            leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "User Icon")
-            }
-        )
+    Column {
+        Text(text = "${message.value}")
 
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = userName.value,
-            onValueChange = {
-                userName.value = it
-            },
-            label = { Text(text = "User Name") },
-            leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "User Icon")
-            }
-        )
-
-        OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "Button")
-        }
+        OutlinedTextField(value = message.value, onValueChange = {
+            message.value = it    //this onValueChange will update the value the Observer and
+            //save value to "message" at the same time
+        })
     }
+
+
 }
 
-@Composable
-fun recyclerViewLayout(data: User) {
-    Card(shape = RoundedCornerShape(10.dp), modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp)) {
-        Row {
-            Image(
-                painter = painterResource(id = R.drawable.camera),
-                contentDescription = "Profile image",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(10.dp)
-                    .size(80.dp)
-                    .clip(
-                        RoundedCornerShape(10.dp)
-                    )
-            )
-            Text(text = data.description)
-        }
-    }
-}
-
-@Composable
-fun initializeRecyclerView(users: List<User>) {
-    LazyColumn {
-        items(users) { user ->     //'users' will get data from list and pass single user to 'user'
-            recyclerViewLayout(data = user)
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
